@@ -1,0 +1,40 @@
+import com.example.videogen.VideoGenerationClient; // Replace with actual SDK import
+import com.example.videogen.VideoGenerationRequest; // Replace with actual SDK import
+import com.example.videogen.VideoGenerationResponse; // Replace with actual SDK import
+
+public class GenerativeVideoExample {
+
+    public static void main(String[] args) {
+        // Initialize the client with your API key
+        VideoGenerationClient client = new VideoGenerationClient("YOUR_API_KEY");
+
+        // Create a video generation request
+        VideoGenerationRequest request = new VideoGenerationRequest.Builder()
+                .prompt("A futuristic city at sunset, with flying cars and glowing buildings.")
+                .durationSeconds(8) // Example: 8-second video
+                .resolution("720p") // Example: 720p resolution
+                .build();
+
+        try {
+            // Send the request and get the response
+            VideoGenerationResponse response = client.generateVideo(request);
+
+            // Check the status of the video generation operation
+            while (!response.isDone()) {
+                Thread.sleep(1000); // Wait for 1 second
+                response = client.checkVideoGenerationStatus(response.getOperationId());
+            }
+
+            // If successful, download or retrieve the generated video
+            if (response.isSuccess()) {
+                client.downloadVideo(response.getVideoUrl(), "generated_video.mp4");
+                System.out.println("Video generated and saved as generated_video.mp4");
+            } else {
+                System.err.println("Video generation failed: " + response.getErrorMessage());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
