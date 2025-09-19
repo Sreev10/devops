@@ -1,0 +1,54 @@
+import org.apache.bcel.Repository;
+import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.generic.ClassGen;
+import org.apache.bcel.generic.ConstantPoolGen;
+import org.apache.bcel.generic.InstructionFactory;
+import org.apache.bcel.generic.InstructionList;
+import org.apache.bcel.generic.MethodGen;
+import org.apache.bcel.generic.PUSH;
+import org.apache.bcel.util.ClassLoaderRepository;
+
+public class SelfModifyingExample {
+
+    public static void main(String[] args) throws Exception {
+        // Initial behavior
+        System.out.println("Initial behavior: " + new MyClass().getMessage());
+
+        // Modify bytecode at runtime
+        modifyClassBehavior(MyClass.class.getName());
+
+        // New behavior after modification
+        System.out.println("Modified behavior: " + new MyClass().getMessage());
+    }
+
+    private static void modifyClassBehavior(String className) throws Exception {
+        JavaClass javaClass = Repository.lookupClass(className);
+        ClassGen classGen = new ClassGen(javaClass);
+        ConstantPoolGen cpGen = classGen.getConstantPool();
+        InstructionFactory factory = new InstructionFactory(classGen, cpGen);
+
+        // Find the 'getMessage' method
+        for (MethodGen methodGen : classGen.getMethods()) {
+            if (methodGen.getName().equals("getMessage")) {
+                InstructionList il = new InstructionList();
+                il.append(factory.createNewString("Modified Message!")); // New string constant
+                il.append(factory.createReturn(org.apache.bcel.generic.Type.STRING)); // Return the new string
+                methodGen.setInstructionList(il);
+                methodGen.setMaxStack();
+                methodGen.setMaxLocals();
+                classGen.replaceMethod(methodGen.getMethod(), methodGen.getMethod());
+                break;
+            }
+        }
+
+        // Redefine the class
+        byte[] modifiedBytes = classGen.getJavaClass().getBytes();
+        ClassLoaderRepository.get.loadClass(className, modifiedBytes);
+    }
+}
+
+class MyClass {
+    public String getMessage() {
+        return "Original Message.";
+    }
+}

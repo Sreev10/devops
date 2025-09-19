@@ -1,0 +1,30 @@
+package com.example.myfirstapp;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main); // Links to your XML layout file
+
+        // Get references to UI elements from your layout
+        Button myButton = findViewById(R.id.my_button); // Assuming you have a button with id "my_button" in activity_main.xml
+        EditText myEditText = findViewById(R.id.my_edit_text); // Assuming you have an EditText with id "my_edit_text"
+
+        // Set an OnClickListener for the button
+        myButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String enteredText = myEditText.getText().toString();
+                Toast.makeText(MainActivity.this, "You entered: " + enteredText, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+}
