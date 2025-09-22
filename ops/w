@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>My Web Page</h1>
+
+<p id="demo">This is a paragraph.</p>
+
+<script>
+  // This script changes the content of the paragraph with the ID "demo"
+  document.getElementById("demo").innerHTML = "Hello JavaScript!";
+</script>
+
+</body>
+</html>
