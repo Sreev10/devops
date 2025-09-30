@@ -1,7 +1,0 @@
-val updateIntent = appUpdateInfo.getAppUpdateIntent()
-        appUpdateManager.startUpdateFlowForResult(
-            updateIntent, // The intent returned by getAppUpdateInfo()
-            AppUpdateType.IMMEDIATE,
-            this, // Your Activity
-            requestCode // A request code to monitor the update flow
-        )
